@@ -2,13 +2,33 @@ import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import type { Measurements, GarmentAnalysis, PatternRequest } from '@/types';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Lazy initialization to avoid build-time errors
+let anthropicClient: Anthropic | null = null;
+let openaiClient: OpenAI | null = null;
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getAnthropic(): Anthropic {
+  if (!anthropicClient) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY environment variable is not set');
+    }
+    anthropicClient = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropicClient;
+}
+
+function getOpenAI(): OpenAI {
+  if (!openaiClient) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openaiClient;
+}
 
 const FREESEWING_KNOWLEDGE = `
 FreeSewing Pattern Creation Guide:
@@ -114,7 +134,7 @@ export async function analyzeGarmentImage(
   imageBase64: string,
   description: string
 ): Promise<GarmentAnalysis> {
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-opus-4-5-20250514',
     max_tokens: 2000,
     messages: [
@@ -181,7 +201,7 @@ export async function generatePatternCode(
   fabricType: string,
   seamAllowance: number
 ): Promise<string> {
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-opus-4-5-20250514',
     max_tokens: 8000,
     messages: [
@@ -239,7 +259,7 @@ export async function fixPatternCode(
   code: string,
   error: string
 ): Promise<string> {
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-opus-4-5-20250514',
     max_tokens: 8000,
     messages: [
@@ -279,7 +299,7 @@ Make sure all imports are correct and the code is complete.`,
 }
 
 export async function generateGarmentImage(prompt: string): Promise<string> {
-  const response = await openai.images.generate({
+  const response = await getOpenAI().images.generate({
     model: 'dall-e-3',
     prompt: `Fashion design illustration: ${prompt}. Clean, professional garment design visualization on a simple background. Focus on the garment construction details, seams, and silhouette. Technical fashion illustration style.`,
     n: 1,
@@ -299,7 +319,7 @@ export async function generateSewingInstructions(
   analysis: GarmentAnalysis,
   patternPieces: string[]
 ): Promise<string> {
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-opus-4-5-20250514',
     max_tokens: 4000,
     messages: [
