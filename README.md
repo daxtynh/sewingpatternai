@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sewing Pattern AI
+
+An AI-powered sewing pattern generator that creates custom, production-ready sewing patterns from images or descriptions.
+
+## Features
+
+- **AI-Powered Analysis**: Upload any garment image and the AI analyzes style, construction, and fit details
+- **Custom Pattern Generation**: Get production-ready sewing patterns sized to your exact measurements
+- **Image Generation**: Describe your dream garment and AI generates a visualization
+- **Pattern Export**: Download patterns as SVG or PDF with seam allowances, grain lines, and notches
+
+## Tech Stack
+
+- **Frontend**: Next.js 14+, React, TypeScript, Tailwind CSS
+- **AI**: Claude API (Anthropic) for pattern generation, OpenAI DALL-E for image generation
+- **Pattern Engine**: FreeSewing for pattern compilation
+- **State Management**: Zustand
+- **Form Handling**: React Hook Form + Zod
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+
+- npm or yarn
+- Anthropic API key (for Claude)
+- OpenAI API key (for DALL-E image generation)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/sewingpatternai.git
+cd sewingpatternai
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Create environment file:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Add your API keys to `.env.local`:
+```
+ANTHROPIC_API_KEY=your_anthropic_key
+OPENAI_API_KEY=your_openai_key
+```
 
-## Learn More
+5. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Open [http://localhost:3000](http://localhost:3000)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+  app/                    # Next.js app router
+    api/                  # API routes
+      patterns/           # Pattern generation endpoints
+      images/             # Image generation endpoints
+    create/               # Pattern creation page
+  components/
+    forms/                # Form components
+    pattern/              # Pattern-specific components
+    ui/                   # Reusable UI components
+  services/               # Business logic
+    ai.ts                 # AI integration
+    pattern-compiler.ts   # Pattern compilation
+    export.ts             # Export utilities
+  store/                  # Zustand stores
+  types/                  # TypeScript types
+```
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable | Description |
+|----------|-------------|
+| `ANTHROPIC_API_KEY` | Your Anthropic API key for Claude |
+| `OPENAI_API_KEY` | Your OpenAI API key for DALL-E |
+| `NEXT_PUBLIC_APP_URL` | Your app's URL (optional) |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push to GitHub
+2. Connect repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
+
+### Other Platforms
+
+The app can be deployed to any platform that supports Next.js:
+
+```bash
+npm run build
+npm start
+```
+
+## How It Works
+
+1. **Upload or Generate**: User uploads a garment image or describes their design
+2. **AI Analysis**: Claude analyzes the image to identify garment type, silhouette, construction details
+3. **Measurements**: User enters their body measurements
+4. **Pattern Generation**: AI generates FreeSewing pattern code based on analysis and measurements
+5. **Compilation**: Pattern code is compiled to SVG
+6. **Export**: User downloads the pattern as SVG or PDF
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT License - see LICENSE file for details
+
+## Acknowledgments
+
+- [FreeSewing](https://freesewing.org/) for the pattern engine
+- [Anthropic](https://anthropic.com/) for Claude AI
+- [OpenAI](https://openai.com/) for DALL-E
